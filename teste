@@ -1,0 +1,36 @@
+/*Considere a seguinte série matemática:
+S = 1/1! + 4/2! + 9/3! + 16/4! +... + (n²)/n!
+Implemente uma função recursiva em C chamada "calcularSerie" que recebe um número
+inteiro positivo n como parâmetro e retorna o valor da série S até o n-ésimo termo.
+Dica: Você pode implementar uma função auxiliar recursiva para calcular o fatorial de um
+número inteiro.*/
+
+#include <stdio.h>
+int fatorial(int n);
+float calcularSerie(int n);
+
+int main(){
+    int n;
+    printf("Insira ate que termo deseja o valor da serie: ");
+    scanf("%d", &n);
+
+    printf("\nValor da serie no %d termo: %.2f", n, calcularSerie(n));
+    return 0;
+}
+
+
+int fatorial(int n) {
+ if (n == 0 || n == 1) {
+ return 1;
+ }
+ return n * fatorial(n - 1);
+}
+
+float calcularSerie(int n){
+    if((n*n)/fatorial(n) == 1 && n == 1){
+        return (n*n)/fatorial(n); //base
+    }
+    else {
+        return ((float)n*n)/fatorial(n) + calcularSerie(n-1); 
+    }
+}
