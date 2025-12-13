@@ -5,23 +5,28 @@ do{
 
 int n;
 
-printf("Selecione uma das opcoes abaixo: ");
-printf("1 - Efetuar Login");
-printf("2- Cadastrar Usuário");
-printf("0- Encerrar Programa");
+printf("Menu: ");
+printf("\n1 - Efetuar Login");
+printf("\n2- Cadastrar Usuário");
+printf("\n0- Encerrar Programa");
+printf("\nSelecione uma das opcoes acima: ");
+scanf("%d", n);
 
 swtich(n){
     case 1:
-        VerificarLogin();
+        VerificarLogin(); //tem que completar aqui ainda quando as funções tiverem prontas
         break;
     case 2:
-        CadastrarNovoUsuario();
+        CadastrarNovoUsuario(); //tem que completar aqui ainda quando as funções tiverem prontas
+        break;
+    case 0:
+        printf("Encerrando Programa...\n");
         break;
     default:
         printf("Opcao invalida tente novamente");
         break;
     }
-} while (n != 3);
-printf("Encerrando Programa");
+} while (n != 0);
 return 0;
+
 }
