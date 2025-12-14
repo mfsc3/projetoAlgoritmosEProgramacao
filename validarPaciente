@@ -1,4 +1,4 @@
-int validarPaciente(char cpf){
+int validarPaciente(char *cpf){
 
     FILE *point;
     paciente pacientes;
