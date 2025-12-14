@@ -1,0 +1,34 @@
+/* medicos */
+
+void InserirNovoMedico() {
+    FILE *arq = fopen("medicos.bin", "ab");
+    medico m;
+
+    if (arq == NULL) return;
+
+    scanf(" %[^\n]", m.CRM);
+    scanf(" %[^\n]", m.nome);
+    scanf(" %[^\n]", m.especialidade);
+    scanf(" %[^\n]", m.data_de_nascimento);
+    scanf("%f", &m.valor_hora_trabalho);
+    scanf(" %[^\n]", m.telefone);
+
+    fwrite(&m, sizeof(medico), 1, arq);
+    fclose(arq);
+}
+
+void BuscarMedicoPorNome() {
+    FILE *arq = fopen("medicos.bin", "rb");
+    medico m;
+    char nomeBusca[50];
+
+    if (arq == NULL) return;
+
+    scanf(" %[^\n]", nomeBusca);
+
+    while (fread(&m, sizeof(medico), 1, arq))
+        if (strcmp(m.nome, nomeBusca) == 0)
+            printf("%s %s\n", m.CRM, m.especialidade);
+
+    fclose(arq);
+}
