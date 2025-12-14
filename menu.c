@@ -10,7 +10,7 @@ printf("\n1 - Efetuar Login");
 printf("\n2- Cadastrar Usuário");
 printf("\n0- Encerrar Programa");
 printf("\nSelecione uma das opcoes acima: ");
-scanf("%d", n);
+scanf("%d", &n);
 
 swtich(n){
     case 1:
@@ -30,3 +30,4 @@ swtich(n){
 return 0;
 
 }
+
