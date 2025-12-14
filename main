@@ -36,7 +36,124 @@ typedef struct {
 } indexPaciente, indexMedico;
 
 int main(){
+    int opcaoMenuInicial, validarLogin = 2, opcaoMenuLogin, opcaoMenuLoginSec;
 
+    do{
+        if(validarLogin == 0)
+            return 0;
 
+        printf("\n-----MENU INICIAL-----");
+        printf("\n1 - Efetuar Login");
+        printf("\n2- Cadastrar Usuário");
+        printf("\n0- Encerrar Programa");
+        printf("\nSelecione uma das opcoes acima: ");
+        scanf("%d", &opcaoMenuInicial);
 
+        switch(opcaoMenuInicial){
+        case 0:
+            printf("\nEncerrando Programa...\n");
+        break;
+        case 1:
+            validarLogin = EfetuarLogin();
+        break;
+        case 2:
+            CadastrarNovoUsuario(); //tem que completar aqui ainda quando as funções tiverem prontas
+        break;
+        default:
+            printf("\nOpcao invalida tente novamente");
+        break;
+        }
+    } while (opcaoMenuInicial != 0 && validarLogin != 1);
+
+    do{
+        printf("\n1 - Pacientes\n2 - Medicos\n3 - Consultas\n0 - Voltar");
+        printf("\nSelecione uma das opcoes acima: ");
+        scanf("%d", &opcaoMenuLogin);
+
+        switch(opcaoMenuLogin){
+            case 1:
+                do{
+                    printf("\n-----MENU PACIENTE-----");
+                    printf("\n1 - Cadastrar Paciente\n2 - Buscar Paciente (Por Nome)\n3 - Alterar Dados do Paciente\n0 - Voltar");
+                    printf("\nSelecione uma das opcoes acima: ");
+                    scanf("%d", &opcaoMenuLoginSec);
+
+                    switch(opcaoMenuLoginSec){
+                        case 1:
+
+                        break;
+                        case 2:
+
+                        break;
+                        case 3:
+
+                        break;
+                        default:
+                            printf("\nOpcao invalida!");
+                        break;
+                    }
+
+                }while(opcaoMenuLoginSec != 0);
+            break;
+            case 2:
+                do{
+                    printf("\n-----MENU MEDICO-----");
+                    printf("\n1 - Cadastrar Medico\n2 - Buscar Medico (Por Nome)\n3 - Listar Medico por Especialidade\n4 - Alterar Dados do Medico\n0 - Voltar");
+                    printf("\nSelecione uma das opcoes acima: ");
+                    scanf("%d", &opcaoMenuLoginSec);
+
+                    switch(opcaoMenuLoginSec){
+                        case 1:
+                            InserirNovoMedico();
+                        break;
+                        case 2:
+                            BuscarMedicoPorNome();
+                        break;
+                        case 3:
+
+                        break;
+                        case 4:
+
+                        break;
+                        default:
+                            printf("\nOpcao invalida!");
+                        break;
+                    }
+
+                }while(opcaoMenuLoginSec != 0);
+            break;
+            case 3:
+                do{
+                    printf("\n-----MENU CONSULTAS-----");
+                    printf("\n1 - Cadastrar Consulta\n2 - Listar Consultas (Por Medico)\n3 - Listar Consultas (Por Paciente)\n4 - Listar Consultas (Por Data)\n0 - Voltar");
+                    printf("\nSelecione uma das opcoes acima: ");
+                    scanf("%d", &opcaoMenuLoginSec);
+
+                    switch(opcaoMenuLoginSec){
+                        case 1:
+
+                        break;
+                        case 2:
+
+                        break;
+                        case 3:
+
+                        break;
+                        case 4:
+
+                        break;
+                        default:
+                            printf("\nOpcao invalida!");
+                        break;
+                    }
+
+                }while(opcaoMenuLoginSec != 0);
+            break;
+            default:
+                printf("Opcao invalida!");
+            break;
+        }
+    }while(opcaoMenuLogin != 0);
+
+    return 0;
 }
