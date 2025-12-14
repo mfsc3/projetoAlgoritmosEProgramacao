@@ -1,0 +1,42 @@
+int EfetuarLogin(){
+    login log;
+    int tentativa = 0;
+
+    printf("\n-----LOGIN-----");
+    do{
+        printf("\nDigite seu usuario: ");
+        scanf(" %[^\n]", log.usuario);
+        printf("\nDigite sua senha: ");
+        scanf(" %[^\n]", log.senha);
+
+        if(VerificarLogin(log.senha, log.usuario) != 1){
+            printf("\nErro: usuario ou senha invalidos");
+            tentativa++;
+        }
+        else{
+            return 1;
+        }
+
+    }while(tentativa < 3);
+
+    printf("\nMaximo de tentativas alcancada!");
+    return 0;
+}
+
+int VerificarLogin(char *senha, char *usuario){
+
+    FILE *pont;
+    login log;
+
+    pont = fopen("login.bin", "rb");
+
+    while(fread(&log, sizeof(login), 1, pont) == 1){
+        if(strcmp(log.usuario, usuario) == 0 && strcmp(log.senha, senha) == 0){
+            printf("\nLogin autenticado!");
+            return 1;
+        }
+    }
+    fclose(pont);
+
+    return 0;
+}
