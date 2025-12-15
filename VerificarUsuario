@@ -1,0 +1,16 @@
+int VerificarUsuario(char *usuario){
+
+    FILE *pont;
+    login log;
+
+    pont = fopen("login.bin", "rb");
+
+    while(fread(&log, sizeof(login), 1, pont) == 1){
+        if(strcmp(log.usuario, usuario) == 0){
+            return 1;
+        }
+    }
+    fclose(pont);
+
+    return 0;
+}
