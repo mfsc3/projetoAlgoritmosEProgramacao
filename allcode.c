@@ -307,7 +307,7 @@ IndexMedico * lerArquivoIndexMedico(){
     fclose(point);
     return v;
 }
-void salvarVetorIndexPaciente(IndexMedico * v, int tam){
+void salvarVetorIndexPaciente(IndexMedico * vP, int tam){
     FILE *point;
 
     point = fopen("IndexPaciente.bin", "wb");
@@ -338,13 +338,13 @@ IndexPaciente * lerArquivoIndexPaciente(){
         return NULL;
     }
 
-    v = (IndexPaciente *)realloc(v, count * sizeof(IndexPaciente));
+    vP = (IndexPaciente *)realloc(vP, count * sizeof(IndexPaciente));
 
 
-    fread(v, sizeof(IndexPaciente), count, point);
+    fread(vP, sizeof(IndexPaciente), count, point);
 
     fclose(point);
-    return v;
+    return vP;
 }
 
 void InserirVetorPacientes(char *cpf, int num){
