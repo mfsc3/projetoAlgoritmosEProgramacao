@@ -17,7 +17,7 @@ typedef struct {
 }medico;
 
 typedef struct {
-    char CPF[12];
+    char CPF[13];
     char nome[30];
     char data_de_nascimento[12];
     char telefone[14];
@@ -25,33 +25,35 @@ typedef struct {
 
 typedef struct {
     char crm_medico[7];
-    char cpf_paciente[12];
+    char cpf_paciente[13];
     char data[12];
     char sintomas[100];
     char encaminhamentos[100];
 }consulta;
 
 typedef struct {
-    int posicao; // PosiÃ§Ã£o do registro no arquivo binÃ¡rio
+    int posicao; // Posição do registro no arquivo binário
     char chave[7]; // CPF ou CRM
 }IndexMedico;
 
 typedef struct {
-    char chave[12]; // CPF ou CRM
-    int posicao; // PosiÃ§Ã£o do registro no arquivo binÃ¡rio
+    char chave[13]; // CPF ou CRM
+    int posicao; // Posição do registro no arquivo binário
 }IndexPaciente;
 
-int encontrarPosicaoInsercao(IndexMedico *v, int tam, char *crm);
+int encontrarPosicaoInsercaoMedicos(IndexMedico *v, int tam, char *crm);
 
-void quicksort(IndexMedico *v, int L, int R);
+int encontrarPosicaoInsercaoPacientes(IndexPaciente *vP, int tam, char *cpf);
 
-void criarVetorMedicos(char *crm, int num);
+void InserirVetorMedicos(char *crm, int num);
+
+void InserirVetorPacientes(char *cpf, int num);
 
 void salvarVetorIndexMedico(IndexMedico * v, int tam);
 
 IndexMedico * lerArquivoIndexMedico();
 
-//DECLARANDO FUNÃÃES LOGIN
+//DECLARANDO FUNÇÕES LOGIN
 
 void CadastrarNovoUsuario();
 
@@ -61,7 +63,7 @@ int EfetuarLogin();
 
 int VerificarUsuario(char *usuario);
 
-//DECLARANDO FUNÃÃES PACIENTE
+//DECLARANDO FUNÇÕES PACIENTE
 
 void BuscarPacientePorNome();
 
@@ -69,7 +71,7 @@ void AlterarDadosPaciente();
 
 void InserirNovoPaciente();
 
-//DECLARANDO FUNÃÃES MEDICO
+//DECLARANDO FUNÇÕES MEDICO
 
 void InserirNovoMedico();
 
@@ -79,7 +81,7 @@ int ValidarPaciente(char *cpf);
 
 int ValidarMedico(char *CRM);
 
-//DECLARANDO FUNÃÃES CONSULTA
+//DECLARANDO FUNÇÔES CONSULTA
 
 void InserirNovaConsulta();
 
@@ -91,7 +93,9 @@ void ListarConsultasPorData();
 
 IndexMedico *v = NULL;
 
-int count = 0;
+IndexPaciente *vP = NULL;
+
+int count = 0, countP = 0;
 
 
 int main(){
@@ -101,21 +105,15 @@ int main(){
     //pointMed = fopen("indiceMedicos.bin", );
     v = lerArquivoIndexMedico();
 
-    for(int i = 0; i < count; i++){
+    /*for(int i = 0; i < count; i++){
         printf("%s\n", v[i].chave);
-        printf("%d\n", i);
-    }
-
-    /*for(int i = 0; i < 2; i++){
-        printf("\n %s", v[i].chave);
-        printf("\n %d", v[i].posicao);
+        printf("%d\n", v[i].posicao);
     }*/
-
 
     do{
         printf("\n-----MENU INICIAL-----");
         printf("\n1 - Efetuar Login");
-        printf("\n2- Cadastrar UsuÃ¡rio");
+        printf("\n2- Cadastrar Usuário");
         printf("\n0- Encerrar Programa");
         printf("\nSelecione uma das opcoes acima: ");
         scanf("%d", &opcaoMenuInicial);
@@ -235,7 +233,7 @@ int main(){
         }
         break;
         case 2:
-            CadastrarNovoUsuario(); //tem que completar aqui ainda quando as funÃ§Ãµes tiverem prontas
+            CadastrarNovoUsuario(); //tem que completar aqui ainda quando as funções tiverem prontas
         break;
         default:
             printf("\nOpcao invalida tente novamente");
@@ -250,7 +248,7 @@ int main(){
     return 0;
 }
 
-int encontrarPosicaoInsercao(IndexMedico *v, int tam, char *crm) {
+int encontrarPosicaoInsercaoMedicos(IndexMedico *v, int tam, char *crm) {
     int i = 0, f = tam - 1, meio;
 
     while (i <= f) {
@@ -267,7 +265,25 @@ int encontrarPosicaoInsercao(IndexMedico *v, int tam, char *crm) {
     }
     return i;
 }
- 
+
+int encontrarPosicaoInsercaoPacientes(IndexPaciente *vP, int tam, char *cpf) {
+    int i = 0, f = tam - 1, meio;
+
+    while (i <= f) {
+        meio = (i + f) / 2;
+
+        if (strcmp(vP[meio].chave, cpf) == 0) {
+            return meio;
+        }
+        if (strcmp(cpf, vP[meio].chave) > 0) {
+            i = meio + 1;
+        } else {
+            f = meio - 1;
+        }
+    }
+    return i;
+}
+
 void salvarVetorIndexMedico(IndexMedico * v, int tam){
     FILE *point;
 
@@ -309,6 +325,19 @@ IndexMedico * lerArquivoIndexMedico(){
     return v;
 }
 
+void InserirVetorPacientes(char *cpf, int num){
+    int posicao = encontrarPosicaoInsercao(vP, countP, cpf);
+
+    countP++;
+
+    for (int i = countP - 1; i > posicao; i--) {
+        vP[i] = vP[i - 1];
+    }
+
+    strcpy(vP[posicao].chave, cpf);
+    vP[posicao].posicao = num;
+}
+
 void InserirVetorMedicos(char *crm, int num){
     int posicao = encontrarPosicaoInsercao(v, count, crm);
 
@@ -321,7 +350,6 @@ void InserirVetorMedicos(char *crm, int num){
     strcpy(v[posicao].chave, crm);
     v[posicao].posicao = num;
 }
-
 
 //FUNCOES MENU INICIAL
 
@@ -365,7 +393,7 @@ int EfetuarLogin(){
     }while(tentativa < 3);
 
     printf("\nMaximo de tentativas alcancada!");
-    return 0; 
+    return 0;
 }
 
 int VerificarLogin(char *senha, char *usuario){
@@ -437,23 +465,29 @@ void InserirNovoMedico() {
     printf("\n-----CADASTRAR MEDICO-----");
     printf("\nDigite o CRM do medico: ");
     scanf(" %[^\n]", m.CRM);
-    printf("Digite o nome do medico: ");
-    scanf(" %[^\n]", m.nome);
-    printf("Digite a especialidade do medico: ");
-    scanf(" %[^\n]", m.especialidade);
-    printf("Digite a data de nascimento do medico: ");
-    scanf(" %[^\n]", m.data_de_nascimento);
-    printf("Digite o valor da hora trabalhada pelo medico: ");
-    scanf("%f", &m.valor_hora_trabalho);
-    printf("Digite o telefone do medico: ");
-    scanf(" %[^\n]", m.telefone);
 
-    fwrite(&m, sizeof(medico), 1, arq);
+    if(ValidarMedico(m.CRM) == 0)
+    {
+        printf("Digite o nome do medico: ");
+        scanf(" %[^\n]", m.nome);
+        printf("Digite a especialidade do medico: ");
+        scanf(" %[^\n]", m.especialidade);
+        printf("Digite a data de nascimento do medico: ");
+        scanf(" %[^\n]", m.data_de_nascimento);
+        printf("Digite o valor da hora trabalhada pelo medico: ");
+        scanf("%f", &m.valor_hora_trabalho);
+        printf("Digite o telefone do medico: ");
+        scanf(" %[^\n]", m.telefone);
 
-    posicao = ftell(arq) / sizeof(medico);
+        fwrite(&m, sizeof(medico), 1, arq);
 
-    criarVetorMedicos(m.CRM, posicao);
+        posicao = ftell(arq) / sizeof(medico);
 
+        InserirVetorMedicos(m.CRM, posicao);
+    }
+    else{
+        printf("\nMedico ja cadastrado!");
+    }
     fclose(arq);
 }
 
@@ -479,20 +513,12 @@ void BuscarMedicoPorNome(){
 
 int validarPaciente(char *cpf){
 
-    FILE *point;
-    paciente pacientes;
-
-    point = fopen("pacientes.bin", "rb");
-
-    while(fread(&pacientes, sizeof(paciente), 1, point) == 1){
-        if(strcmp(pacientes.CPF, cpf) == 0){
-            printf("\nPaciente encontrado!");
+    for(int i = 0; i < count; i++){
+        if(strcmp(vP[i].chave, cpf) == 0)
             return 1;
-        }
     }
 
     printf("\nPaciente nao encontrado!");
-    fclose(point);
     return 0;
 }
 
@@ -503,16 +529,22 @@ void AlterarDadosPaciente() {
 
     if (!f) return;
 
-    printf("CPF do paciente: "); scanf("%11s", cpfBusca);
-
-    while (fread(&p, sizeof(paciente), 1, f)) {
-        if (strcmp(p.CPF, cpfBusca) == 0) {
-            printf("Novo telefone: "); 
-            scanf(" %[^\n]", p.telefone);
-            fseek(f, -sizeof(paciente), SEEK_CUR);
-            fwrite(&p, sizeof(paciente), 1, f);
-            break;
+    printf("CPF do paciente: ");
+    scanf("%11s", cpfBusca);
+    
+    if(validarPaciente(cpfBusca) == 1)
+    {
+        while (fread(&p, sizeof(paciente), 1, f)) {
+            if (strcmp(p.CPF, cpfBusca) == 0) {
+                printf("Novo telefone: "); scanf("%13s", p.telefone);
+                fseek(f, -sizeof(paciente), SEEK_CUR);
+                fwrite(&p, sizeof(paciente), 1, f);
+                break;
+            }
         }
+    }
+    else{
+        printf("\nPaciente Nao Encontrado!");
     }
     fclose(f);
 }
@@ -541,13 +573,14 @@ void InserirNovoPaciente() {
     if (!f) return;
 
     printf("CPF: "); 
-    scanf(" %[^\n]", p.CPF);
-    printf("Nome: ");
-    scanf(" %[^\n]", p.nome);
+    scanf("%11s", p.CPF);
+    printf("Nome: "); 
+    getchar(); 
+    fgets(p.nome, 30, stdin);
     printf("Nascimento: "); 
-    scanf(" %[^\n]", p.data_de_nascimento);
+    scanf("%11s", p.data_de_nascimento);
     printf("Telefone: "); 
-    scanf(" %[^\n]", p.telefone);
+    scanf("%13s", p.telefone);
 
     fwrite(&p, sizeof(paciente), 1, f);
     fclose(f);
@@ -561,7 +594,7 @@ void InserirNovaConsulta() {
 
     if (!f) return;
 
-    printf("CRM do mÃ©dico: ");
+    printf("CRM do médico: ");
     scanf(" %[^\n]", c.crm_medico);
 
     if(ValidarMedico(c.crm_medico) == 1){
@@ -570,10 +603,11 @@ void InserirNovaConsulta() {
         printf("Data: ");
         scanf(" %[^\n]", c.data);
         printf("Sintomas: ");
-        scanf(" %[^\n]", c.sintomas);
+        getchar();
+        fgets(c.sintomas, 100, stdin);
         printf("Encaminhamentos: ");
-        scanf(" %[^\n]", c.encaminhamentos);
-        
+        fgets(c.encaminhamentos, 100, stdin);
+
         fwrite(&c, sizeof(consulta), 1, f);
     }
     else
@@ -589,7 +623,7 @@ void ListarConsultasPorMedico() {
 
     if (!f) return;
 
-    printf("CRM do mÃ©dico: "); scanf("%5s", crm);
+    printf("CRM do médico: "); scanf("%5s", crm);
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.crm_medico, crm) == 0) {
@@ -611,7 +645,7 @@ void ListarConsultasPorPaciente() {
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.cpf_paciente, cpf) == 0) {
-            printf("Data: %s | MÃ©dico: %s", c.data, c.crm_medico);
+            printf("Data: %s | Médico: %s", c.data, c.crm_medico);
         }
     }
     fclose(f);
@@ -629,7 +663,7 @@ void ListarConsultasPorData() {
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.data, data) == 0) {
-            printf("MÃ©dico: %s | Paciente: %s", c.crm_medico, c.cpf_paciente);
+            printf("Médico: %s | Paciente: %s", c.crm_medico, c.cpf_paciente);
         }
     }
     fclose(f);
