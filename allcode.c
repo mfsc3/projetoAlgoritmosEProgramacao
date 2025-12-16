@@ -42,59 +42,42 @@ typedef struct {
 }IndexPaciente;
 
 int encontrarPosicaoInsercaoMedicos(IndexMedico *v, int tam, char *crm);
-
 int encontrarPosicaoInsercaoPacientes(IndexPaciente *vP, int tam, char *cpf);
-
 void InserirVetorMedicos(char *crm, int num);
-
 void InserirVetorPacientes(char *cpf, int num);
-
 void salvarVetorIndexMedico(IndexMedico * v, int tam);
-
 IndexMedico * lerArquivoIndexMedico();
-
+void salvarVetorIndexPaciente(IndexMedico * v, int tam);
+IndexPaciente * lerArquivoIndexPaciente();
 //DECLARANDO FUNÇÕES LOGIN
 
 void CadastrarNovoUsuario();
-
 int VerificarLogin(char *senha, char *usuario);
-
 int EfetuarLogin();
-
 int VerificarUsuario(char *usuario);
 
 //DECLARANDO FUNÇÕES PACIENTE
 
 void BuscarPacientePorNome();
-
 void AlterarDadosPaciente();
-
 void InserirNovoPaciente();
 
 //DECLARANDO FUNÇÕES MEDICO
 
 void InserirNovoMedico();
-
 void BuscarMedicoPorNome();
-
 int ValidarPaciente(char *cpf);
-
 int ValidarMedico(char *CRM);
 
 //DECLARANDO FUNÇÔES CONSULTA
 
 void InserirNovaConsulta();
-
 void ListarConsultasPorMedico();
-
 void ListarConsultasPorPaciente();
-
 void ListarConsultasPorData();
 
 IndexMedico *v = NULL;
-
 IndexPaciente *vP = NULL;
-
 int count = 0, countP = 0;
 
 
@@ -320,6 +303,45 @@ IndexMedico * lerArquivoIndexMedico(){
 
 
     fread(v, sizeof(IndexMedico), count, point);
+
+    fclose(point);
+    return v;
+}
+void salvarVetorIndexPaciente(IndexMedico * v, int tam){
+    FILE *point;
+
+    point = fopen("IndexPaciente.bin", "wb");
+
+    if (point == NULL) {
+        return;
+    }
+
+    fwrite(&tam, sizeof(int), 1, point);
+
+    fwrite(v, sizeof(IndexPaciente), tam, point);
+
+    fclose(point);
+}
+IndexPaciente * lerArquivoIndexPaciente(){
+    FILE *point;
+    point = fopen("IndexPaciente.bin", "rb");
+
+    if (point == NULL) {
+        return NULL;
+    }
+
+    fread(&count, sizeof(int), 1, point);
+
+
+    if (count == 0){
+        fclose(point);
+        return NULL;
+    }
+
+    v = (IndexPaciente *)realloc(v, count * sizeof(IndexPaciente));
+
+
+    fread(v, sizeof(IndexPaciente), count, point);
 
     fclose(point);
     return v;
@@ -573,14 +595,13 @@ void InserirNovoPaciente() {
     if (!f) return;
 
     printf("CPF: "); 
-    scanf("%11s", p.CPF);
-    printf("Nome: "); 
-    getchar(); 
-    fgets(p.nome, 30, stdin);
+    scanf(" %[^\n]", p.CPF);
+    printf("Nome: ");
+    scanf(" %[^\n]", p.nome);
     printf("Nascimento: "); 
-    scanf("%11s", p.data_de_nascimento);
+    scanf(" %[^\n]", p.data_de_nascimento);
     printf("Telefone: "); 
-    scanf("%13s", p.telefone);
+    scanf(" %[^\n]", p.telefone);
 
     fwrite(&p, sizeof(paciente), 1, f);
     fclose(f);
@@ -597,16 +618,15 @@ void InserirNovaConsulta() {
     printf("CRM do médico: ");
     scanf(" %[^\n]", c.crm_medico);
 
-    if(ValidarMedico(c.crm_medico) == 1){
+   if(ValidarMedico(c.crm_medico) == 1){
         printf("CPF do paciente: ");
         scanf(" %[^\n]", c.cpf_paciente);
         printf("Data: ");
         scanf(" %[^\n]", c.data);
         printf("Sintomas: ");
-        getchar();
-        fgets(c.sintomas, 100, stdin);
+        scanf(" %[^\n]", c.sintomas);
         printf("Encaminhamentos: ");
-        fgets(c.encaminhamentos, 100, stdin);
+        scanf(" %[^\n]", c.encaminhamentos);
 
         fwrite(&c, sizeof(consulta), 1, f);
     }
@@ -623,7 +643,8 @@ void ListarConsultasPorMedico() {
 
     if (!f) return;
 
-    printf("CRM do médico: "); scanf("%5s", crm);
+    printf("CRM do médico: "); 
+    scanf(" %[^\n", crm);
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.crm_medico, crm) == 0) {
@@ -641,7 +662,7 @@ void ListarConsultasPorPaciente() {
     if (!f) return;
 
     printf("CPF do paciente: ");
-    scanf("%11s", cpf);
+    scanf("%[^\n", cpf);
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.cpf_paciente, cpf) == 0) {
@@ -659,7 +680,7 @@ void ListarConsultasPorData() {
     if (!f) return;
 
     printf("Data: ");
-    scanf("%11s", data);
+    scanf(" %1[^\n]", data);
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.data, data) == 0) {
