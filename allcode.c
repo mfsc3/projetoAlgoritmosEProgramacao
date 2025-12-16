@@ -472,8 +472,6 @@ int ValidarMedico(char *CRM){
         if(strcmp(v[i].chave, CRM) == 0)
             return 1;
     }
-
-    printf("\nMedico nao encontrado!");
     return 0;
 }
 
