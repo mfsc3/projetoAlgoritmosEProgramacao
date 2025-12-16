@@ -47,7 +47,7 @@ int encontrarPosicaoInsercao(IndexMedico *v, int tam, char *crm);
 
 void quicksort(IndexMedico *v, int L, int R);
 
-void criarVetorMedicos();
+void criarVetorMedicos(char *crm, int num);
 
 void salvarVetorIndexMedico(IndexMedico * v, int tam);
 
@@ -55,7 +55,6 @@ IndexMedico * lerArquivoIndexMedico();
 
 void ordenarIndexMedicos(IndexMedico *v, int tam);
 
-int buscaBinaria(IndexMedico *v, int tam, char *x);
 //DECLARANDO FUNÇÕES LOGIN
 
 void CadastrarNovoUsuario();
@@ -105,10 +104,6 @@ int main(){
     //FILE *pointMed, *pointPac;
     //pointMed = fopen("indiceMedicos.bin", );
     v = lerArquivoIndexMedico();
-
-    if(v == NULL){
-        criarVetorMedicos();
-    }
 
     for(int i = 0; i < count; i++){
         printf("%s\n", v[i].chave);
@@ -283,71 +278,54 @@ void ordenarIndexMedicos(IndexMedico *v, int tam){
 
 void salvarVetorIndexMedico(IndexMedico * v, int tam){
     FILE *point;
-    int i = 0;
 
     point = fopen("IndexMedico.bin", "wb");
+    if (point == NULL) {
+        return;
+    }
 
-    while(fwrite(&v[i], sizeof(IndexMedico), 1, point) == 1){
-            i++;
+    //fwrite(&tam, sizeof(int), 1, point);
+
+    if (tam > 0) {
+        if (fwrite(v, sizeof(IndexMedico), tam, point) != tam) {
+            printf("\nAVISO: Falha ao salvar todos os indices.");
         }
+    }
+
     fclose(point);
 }
 
 IndexMedico * lerArquivoIndexMedico(){
-
-// é chamada sempre no incio do programa
-// ler o vetor de medicos que está no arquivo indexmedico.bin e
-// criar o vetor na memoria RAM
-// retorn o vetor com os dados
-    int i = 0;
-    IndexMedico m;
     FILE *point;
     point = fopen("IndexMedico.bin", "rb");
 
-    while(fread(&m, sizeof(IndexMedico), 1, point) == 1){
-        count++;
+    if (point == NULL) {
+        return NULL;
     }
 
-    if(count == 0){
-        return 0;
+    if (count == 0){
+        fclose(point);
+        return NULL;
     }
 
-    v = (IndexMedico *) malloc(count * sizeof(IndexMedico));
+    IndexMedico *v_temp = (IndexMedico *)realloc(v, count * sizeof(IndexMedico));
+    v = v_temp;
 
-    fseek(point, 0, SEEK_SET);
-
-    while(fread(&m, sizeof(IndexMedico), 1, point) == 1){
-            strcpy(v[i].chave, m.chave);
-            v[i].posicao= m.posicao;
-            i++;
-        }
+    fread(v, sizeof(IndexMedico), count, point);
     fclose(point);
     return v;
-
 }
+void criarVetorMedicos(char *crm, int num){
+    int posicao = encontrarPosicaoInsercao(v, count, crm);
 
-void criarVetorMedicos(char *crm){
-    FILE *point1;
-    medico m;
-
-    int i = 0, posicao = encontrarPosicaoInsercao(v, count, crm);
     count++;
-
-    point1 = fopen("medicos.bin", "rb");
-
-    if(count != 0)
-        v = (IndexMedico *) realloc(v, count * sizeof(IndexMedico));
-    else
-        v = (IndexMedico *) malloc(1 *sizeof(IndexMedico));
 
     for (int i = count - 1; i > posicao; i--) {
         v[i] = v[i - 1];
     }
-    strcpy(v[count].chave, crm);
-    //v[i].posicao = ftell(point1) - sizeof(IndexMedico);
 
-    ordenarIndexMedicos(v, count);
-    fclose(point1);
+    strcpy(v[posicao].chave, crm);
+    v[posicao].posicao = num;
 }
 
 void troca(IndexMedico *v, int i, int j)
@@ -484,6 +462,7 @@ int ValidarMedico(char *CRM){
 void InserirNovoMedico() {
     FILE *arq = fopen("medicos.bin", "ab");
     medico m;
+    int posicao = 0;
 
     if (arq == NULL) return;
 
@@ -503,7 +482,9 @@ void InserirNovoMedico() {
 
     fwrite(&m, sizeof(medico), 1, arq);
 
-    criarVetorMedicos(m.CRM);
+    posicao = ftell(arq) / sizeof(medico);
+
+    criarVetorMedicos(m.CRM, posicao);
 
     fclose(arq);
 }
