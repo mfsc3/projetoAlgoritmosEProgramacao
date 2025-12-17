@@ -87,6 +87,7 @@ int main(){
     //FILE *pointMed, *pointPac;
     //pointMed = fopen("indiceMedicos.bin", );
     v = lerArquivoIndexMedico();
+    vP = lerArquivoIndexPaciente();
 
     /*for(int i = 0; i < count; i++){
         printf("%s\n", v[i].chave);
@@ -225,8 +226,10 @@ int main(){
     } while (opcaoMenuInicial != 0 && validarLogin != 0);
 
     salvarVetorIndexMedico(v,count);
+    salvarVetorIndexPaciente(vP, countP);
 
     free(v);
+    free(vP);
 
     return 0;
 }
@@ -331,7 +334,7 @@ IndexPaciente * lerArquivoIndexPaciente(){
         return NULL;
     }
 
-    fread(&count, sizeof(int), 1, point);
+    fread(&countP, sizeof(int), 1, point);
 
 
     if (count == 0){
@@ -339,10 +342,10 @@ IndexPaciente * lerArquivoIndexPaciente(){
         return NULL;
     }
 
-    vP = (IndexPaciente *)realloc(vP, count * sizeof(IndexPaciente));
+    vP = (IndexPaciente *)realloc(vP, countP * sizeof(IndexPaciente));
 
 
-    fread(vP, sizeof(IndexPaciente), count, point);
+    fread(vP, sizeof(IndexPaciente), countP, point);
 
     fclose(point);
     return vP;
@@ -535,7 +538,7 @@ void BuscarMedicoPorNome(){
 
 int validarPaciente(char *cpf){
 
-    for(int i = 0; i < count; i++){
+    for(int i = 0; i < countP; i++){
         if(strcmp(vP[i].chave, cpf) == 0)
             return 1;
     }
@@ -645,13 +648,16 @@ void ListarConsultasPorMedico() {
 
     printf("CRM do médico: ");
     scanf(" %[^\n]", crm);
-
-    while (fread(&c, sizeof(consulta), 1, f) == 1) {
-        if (strcmp(c.crm_medico, crm) == 0) {
-            printf("Data: %s | Paciente: %s", c.data, c.cpf_paciente);
+    
+    if(ValidarMedico(crm) == 1){
+        while (fread(&c, sizeof(consulta), 1, f) == 1) {
+            printf("OIIIIIIIIIIIIIIII");
+            if (strcmp(c.crm_medico, crm) == 0) {
+                printf("\nData: %s | Paciente: %s", c.data, c.cpf_paciente);
+            }
         }
+        fclose(f);
     }
-    fclose(f);
 }
 
 void ListarConsultasPorPaciente() {
@@ -662,9 +668,9 @@ void ListarConsultasPorPaciente() {
     if (!f) return;
 
     printf("CPF do paciente: ");
-    scanf("%[^\n]", cpf);
+    scanf(" %[^\n]", cpf);
 
-    while (fread(&c, sizeof(consulta), 1, f)) {
+    while (fread(&c, sizeof(consulta), 1, f) ) {
         if (strcmp(c.cpf_paciente, cpf) == 0) {
             printf("Data: %s | Médico: %s", c.data, c.crm_medico);
         }
