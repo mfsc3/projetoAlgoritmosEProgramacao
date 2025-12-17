@@ -304,7 +304,7 @@ IndexMedico * lerArquivoIndexMedico(){
         return NULL;
     }
 
-    v = (IndexMedico *)realloc(v, count * sizeof(IndexMedico));
+    v = (IndexMedico *)malloc(count * sizeof(IndexMedico));
 
 
     fread(v, sizeof(IndexMedico), count, point);
@@ -339,13 +339,12 @@ IndexPaciente * lerArquivoIndexPaciente(){
     fread(&countP, sizeof(int), 1, point);
 
 
-    if (count == 0){
+    if (countP == 0){
         fclose(point);
         return NULL;
     }
 
-    vP = (IndexPaciente *)realloc(vP, countP * sizeof(IndexPaciente));
-
+    vP = (IndexPaciente *)malloc(countP * sizeof(IndexPaciente));
 
     fread(vP, sizeof(IndexPaciente), countP, point);
 
@@ -357,6 +356,7 @@ void InserirVetorPacientes(char *cpf, int num){
     int posicao = encontrarPosicaoInsercaoPacientes(vP, countP, cpf);
 
     countP++;
+
     vP = (IndexPaciente *)realloc(vP, countP * sizeof(IndexPaciente));
 
     for (int i = countP - 1; i > posicao; i--) {
@@ -370,6 +370,7 @@ void InserirVetorPacientes(char *cpf, int num){
 void InserirVetorMedicos(char *crm, int num){
     int posicao = encontrarPosicaoInsercaoMedicos(v, count, crm);
     count++;
+
     v = (IndexMedico *)realloc(v, count * sizeof(IndexMedico));
 
     for (int i = count - 1; i > posicao; i--) {
@@ -576,6 +577,7 @@ void AlterarDadosMedico() {
                 printf("Valor da hora trabalhada: "); scanf("%f", &m.valor_hora_trabalho);
                 printf("Novo telefone: "); scanf(" %[^\n]", m.telefone);
                 fseek(f, -sizeof(medico), SEEK_CUR);
+                fflush(f);
                 fwrite(&m, sizeof(medico), 1, f);
                 break;
             }
@@ -619,6 +621,7 @@ void AlterarDadosPaciente() {
                 printf("Novo telefone: "); scanf(" %[^\n]", p.telefone);
                 printf("Data de nascimento: "); scanf(" %[^\n]", p.data_de_nascimento);
                 fseek(f, -sizeof(paciente), SEEK_CUR);
+                fflush(f);
                 fwrite(&p, sizeof(paciente), 1, f);
                 break;
             }
