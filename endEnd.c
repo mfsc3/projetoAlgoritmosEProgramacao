@@ -355,8 +355,8 @@ IndexPaciente * lerArquivoIndexPaciente(){
 
 void InserirVetorPacientes(char *cpf, int num){
     int posicao = encontrarPosicaoInsercaoPacientes(vP, countP, cpf);
-
     countP++;
+    vP = (IndexPaciente *)realloc(vP, countP * sizeof(IndexPaciente));
 
     for (int i = countP - 1; i > posicao; i--) {
         vP[i] = vP[i - 1];
