@@ -47,7 +47,7 @@ void InserirVetorMedicos(char *crm, int num);
 void InserirVetorPacientes(char *cpf, int num);
 void salvarVetorIndexMedico(IndexMedico * v, int tam);
 IndexMedico * lerArquivoIndexMedico();
-void salvarVetorIndexPaciente(IndexMedico * v, int tam);
+void salvarVetorIndexPaciente(IndexPaciente * vP, int tam);
 IndexPaciente * lerArquivoIndexPaciente();
 //DECLARANDO FUNÇÕES LOGIN
 
@@ -87,7 +87,6 @@ int main(){
     //FILE *pointMed, *pointPac;
     //pointMed = fopen("indiceMedicos.bin", );
     v = lerArquivoIndexMedico();
-    vp = lerArquivoIndexPaciente();
 
     /*for(int i = 0; i < count; i++){
         printf("%s\n", v[i].chave);
@@ -308,7 +307,7 @@ IndexMedico * lerArquivoIndexMedico(){
     fclose(point);
     return v;
 }
-void salvarVetorIndexPaciente(IndexMedico * vP, int tam){
+void salvarVetorIndexPaciente(IndexPaciente * vP, int tam){
     FILE *point;
 
     point = fopen("IndexPaciente.bin", "wb");
@@ -319,10 +318,11 @@ void salvarVetorIndexPaciente(IndexMedico * vP, int tam){
 
     fwrite(&tam, sizeof(int), 1, point);
 
-    fwrite(v, sizeof(IndexPaciente), tam, point);
+    fwrite(vP, sizeof(IndexPaciente), tam, point);
 
     fclose(point);
 }
+
 IndexPaciente * lerArquivoIndexPaciente(){
     FILE *point;
     point = fopen("IndexPaciente.bin", "rb");
@@ -349,7 +349,7 @@ IndexPaciente * lerArquivoIndexPaciente(){
 }
 
 void InserirVetorPacientes(char *cpf, int num){
-    int posicao = encontrarPosicaoInsercao(vP, countP, cpf);
+    int posicao = encontrarPosicaoInsercaoPacientes(vP, countP, cpf);
 
     countP++;
 
@@ -362,9 +362,9 @@ void InserirVetorPacientes(char *cpf, int num){
 }
 
 void InserirVetorMedicos(char *crm, int num){
-    int posicao = encontrarPosicaoInsercao(v, count, crm);
-
+    int posicao = encontrarPosicaoInsercaoMedicos(v, count, crm);
     count++;
+    v = (IndexMedico *)realloc(v, count * sizeof(IndexMedico));
 
     for (int i = count - 1; i > posicao; i--) {
         v[i] = v[i - 1];
@@ -505,11 +505,12 @@ void InserirNovoMedico() {
         posicao = ftell(arq) / sizeof(medico);
 
         InserirVetorMedicos(m.CRM, posicao);
+
+        fclose(arq);
     }
     else{
         printf("\nMedico ja cadastrado!");
     }
-    fclose(arq);
 }
 
 void BuscarMedicoPorNome(){
@@ -552,7 +553,7 @@ void AlterarDadosPaciente() {
 
     printf("CPF do paciente: ");
     scanf("%11s", cpfBusca);
-    
+
     if(validarPaciente(cpfBusca) == 1)
     {
         while (fread(&p, sizeof(paciente), 1, f)) {
@@ -593,13 +594,13 @@ void InserirNovoPaciente() {
 
     if (!f) return;
 
-    printf("CPF: "); 
+    printf("CPF: ");
     scanf(" %[^\n]", p.CPF);
     printf("Nome: ");
     scanf(" %[^\n]", p.nome);
-    printf("Nascimento: "); 
+    printf("Nascimento: ");
     scanf(" %[^\n]", p.data_de_nascimento);
-    printf("Telefone: "); 
+    printf("Telefone: ");
     scanf(" %[^\n]", p.telefone);
 
     fwrite(&p, sizeof(paciente), 1, f);
@@ -638,14 +639,14 @@ void InserirNovaConsulta() {
 void ListarConsultasPorMedico() {
     FILE *f = fopen("consultas.bin", "rb");
     consulta c;
-    char crm[6];
+    char crm[7];
 
     if (!f) return;
 
-    printf("CRM do médico: "); 
+    printf("CRM do médico: ");
     scanf(" %[^\n]", crm);
 
-    while (fread(&c, sizeof(consulta), 1, f)) {
+    while (fread(&c, sizeof(consulta), 1, f) == 1) {
         if (strcmp(c.crm_medico, crm) == 0) {
             printf("Data: %s | Paciente: %s", c.data, c.cpf_paciente);
         }
@@ -656,7 +657,7 @@ void ListarConsultasPorMedico() {
 void ListarConsultasPorPaciente() {
     FILE *f = fopen("consultas.bin", "rb");
     consulta c;
-    char cpf[12];
+    char cpf[13];
 
     if (!f) return;
 
