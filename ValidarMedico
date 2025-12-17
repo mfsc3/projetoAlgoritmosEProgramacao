@@ -1,18 +1,6 @@
-int ValidarMedico(char *CRM){
-
-    FILE *point;
-    medico medicos;
-
-    point = fopen("medicos.bin", "rb");
-
-    while(fread(&medicos, sizeof(medico), 1, point) == 1){
-        if(strcmp(medicos.CRM, CRM) == 0){
-            printf("\nMedico encontrado!");
-            return 1;
-        }
+int ValidarMedico(char *CRM) {
+    if (buscaBinariaMedico(CRM) != -1) {
+        return 1; 
     }
-
-    printf("\nMedico nao encontrado!");
-    fclose(point);
-    return 0;
+    return 0; 
 }
