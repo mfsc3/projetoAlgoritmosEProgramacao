@@ -1,18 +1,6 @@
 int validarPaciente(char *cpf){
-
-    FILE *point;
-    paciente pacientes;
-
-    point = fopen("pacientes.bin", "rb");
-
-    while(fread(&pacientes, sizeof(paciente), 1, point) == 1){
-        if(strcmp(pacientes.CPF, cpf) == 0){
-            printf("\nPaciente encontrado!");
-            return 1;
-        }
+    if (buscaBinariaPaciente(CPF) != -1) {
+        return 1; 
     }
-
-    printf("\nPaciente nao encontrado!");
-    fclose(point);
-    return 0;
+    return 0; 
 }
