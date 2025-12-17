@@ -355,6 +355,7 @@ IndexPaciente * lerArquivoIndexPaciente(){
 
 void InserirVetorPacientes(char *cpf, int num){
     int posicao = encontrarPosicaoInsercaoPacientes(vP, countP, cpf);
+
     countP++;
     vP = (IndexPaciente *)realloc(vP, countP * sizeof(IndexPaciente));
 
@@ -608,7 +609,7 @@ void AlterarDadosPaciente() {
     if (!f) return;
 
     printf("CPF do paciente: ");
-    scanf("%11s", cpfBusca);
+    scanf(" %[^\n]", cpfBusca);
 
     if(validarPaciente(cpfBusca) == 1)
     {
@@ -636,10 +637,11 @@ void BuscarPacientePorNome() {
 
     if (!f) return;
 
-    printf("Nome do paciente: "); getchar(); fgets(nomeBusca, 30, stdin);
+    printf("Nome do paciente: ");
+    scanf(" %[^\n]", nomeBusca);
 
-    while (fread(&p, sizeof(paciente), 1, f)) {
-        if (strstr(p.nome, nomeBusca)) {
+    while (fread(&p, sizeof(paciente), 1, f) == 1) {
+        if (strcmp(p.nome, nomeBusca) == 0) {
             printf("CPF: %s | Nome: %s", p.CPF, p.nome);
         }
     }
