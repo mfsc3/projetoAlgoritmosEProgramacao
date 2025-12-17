@@ -769,7 +769,7 @@ void ListarConsultasPorData() {
     if (!f) return;
 
     printf("Data: ");
-    scanf(" %1[^\n]", data);
+    scanf(" %[^\n]", data);
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.data, data) == 0) {
