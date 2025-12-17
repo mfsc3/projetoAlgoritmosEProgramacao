@@ -87,6 +87,7 @@ int main(){
     //FILE *pointMed, *pointPac;
     //pointMed = fopen("indiceMedicos.bin", );
     v = lerArquivoIndexMedico();
+    vp = lerArquivoIndexPaciente();
 
     /*for(int i = 0; i < count; i++){
         printf("%s\n", v[i].chave);
@@ -642,7 +643,7 @@ void ListarConsultasPorMedico() {
     if (!f) return;
 
     printf("CRM do médico: "); 
-    scanf(" %[^\n", crm);
+    scanf(" %[^\n]", crm);
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.crm_medico, crm) == 0) {
@@ -660,7 +661,7 @@ void ListarConsultasPorPaciente() {
     if (!f) return;
 
     printf("CPF do paciente: ");
-    scanf("%[^\n", cpf);
+    scanf("%[^\n]", cpf);
 
     while (fread(&c, sizeof(consulta), 1, f)) {
         if (strcmp(c.cpf_paciente, cpf) == 0) {
